@@ -1,0 +1,25 @@
+/* 📌 Задача 252. Для массива целых чисел сначала замени значения накопленными суммами; затем найди медиану каждого префикса, для чётной длины усредни два центральных значения. Верни объект с подготовленным массивом и ответом; исходный массив не изменяй. Уровень: Middle. */
+
+function prepare(items) {
+  let total = 0; return items.map(x => total += x);
+}
+
+function analyze(a) {
+  const sorted = [], result = [];
+  for (const x of a) {
+    let left = 0, right = sorted.length;
+    while (left < right) { const middle = (left + right) >>> 1; if (sorted[middle] < x) left = middle + 1; else right = middle; }
+    sorted.splice(left, 0, x); const middle = sorted.length >>> 1;
+    result.push(sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2);
+  }
+  return result;
+}
+
+function solve(items) {
+  const prepared = prepare(items);
+  return { prepared, answer: analyze(prepared) };
+}
+
+console.log(JSON.stringify(solve([3, -1, 3, 0, 2]))); // Вывод 1: {"prepared":[3,2,5,5,7],"answer":[3,2.5,3,4,5]}
+console.log(JSON.stringify(solve([]))); // Вывод 2: {"prepared":[],"answer":[]}
+console.log(JSON.stringify(solve([1, 1, 2, 2]))); // Вывод 3: {"prepared":[1,2,4,6],"answer":[1,1.5,2,3]}
