@@ -1,0 +1,17 @@
+/* 📌 Задача 743. Создай класс с историей вычислений и отменой последнего результата; отмена пустой истории возвращает null. Вычисление: построй нечётные по частоте значения через переключение членства в Set. Вход содержит конечные целые числа. Уровень: Senior. */
+
+function compute(items) {
+  const odd = new Set(); for (const x of items) { if (odd.has(x)) odd.delete(x); else odd.add(x); } return [...odd];
+}
+
+class History {
+  #values = [];
+  execute(items) { const value = compute(items); this.#values.push(value); return value; }
+  undo() { return this.#values.length ? this.#values.pop() : null; }
+  get size() { return this.#values.length; }
+}
+const history = new History();
+
+console.log(JSON.stringify(({value: history.execute([3, -1, 3, 0]), size: history.size}))); // Вывод 1: {"value":[-1,0],"size":1}
+console.log(JSON.stringify(({value: history.undo(), size: history.size}))); // Вывод 2: {"value":[-1,0],"size":0}
+console.log(JSON.stringify(({value: history.undo(), size: history.size}))); // Вывод 3: {"value":null,"size":0}
