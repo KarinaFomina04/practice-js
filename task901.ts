@@ -1,0 +1,16 @@
+/* 📌 Задача 901. Создай generic-функцию отображения успешного Result с discriminated union; ошибку передавай без изменения. Стратегия вычисления: сожми последовательные целые в отсортированный список границ интервалов; входной массив не изменяй. Уровень: Middle. */
+
+function compute(items: readonly number[]): number[] {
+  const sorted = [...new Set(items)].sort((a, b) => a - b), result: number[] = []; for (let i = 0; i < sorted.length;) { const first = sorted[i]!; let last = first; while (i + 1 < sorted.length && sorted[i + 1] === last + 1) last = sorted[++i]!; result.push(first, last); i++; } return result;
+}
+
+type Result<T> = { ok: true; value: T } | { ok: false; error: string };
+function mapResult<A, B>(result: Result<A>, map: (value: A) => B): Result<B> {
+  return result.ok ? {ok: true, value: map(result.value)} : result;
+}
+
+console.log(JSON.stringify(mapResult({ok: true, value: [3, -1, 3, 0]}, compute))); // Вывод 1: {"ok":true,"value":[-1,0,3,3]}
+console.log(JSON.stringify(mapResult({ok: true, value: []}, compute))); // Вывод 2: {"ok":true,"value":[]}
+console.log(JSON.stringify(mapResult<readonly number[], number[]>({ok: false, error: 'нет данных'}, compute))); // Вывод 3: {"ok":false,"error":"нет данных"}
+
+export {};
